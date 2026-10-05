@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NIST SP 800-53 Rev 5 Control Catalog</title>
+<style>
+:root {
+  --bg: #0f1419;
+  --surface: #1a2332;
+  --surface2: #243044;
+  --border: #2d3a4f;
+  --text: #e7ecf3;
+  --text-muted: #8b9cb3;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-soft: rgba(59, 130, 246, 0.15);
+  --success: #22c55e;
+  --warning: #f59e0b;
+  --family-ac: #3b82f6;
+  --family-at: #8b5cf6;
+  --family-au: #06b6d4;
+  --family-ca: #10b981;
+  --family-cm: #f59e0b;
+  --family-cp: #ef4444;
+  --family-ia: #ec4899;
+  --family-ir: #f97316;
+  --family-ma: #84cc16;
+  --family-mp: #14b8a6;
+  --family-pe: #6366f1;
+  --family-pl: #a855f7;
+  --family-pm: #0ea5e9;
+  --family-ps: #e11d48;
+  --family-pt: #d946ef;
+  --family-ra: #f43f5e;
+  --family-sa: #22d3ee;
+  --family-sc: #4ade80;
+  --family-si: #fb923c;
+  --family-sr: #c084fc;
+  --radius: 12px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.35);
+  --font: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  --mono: "SF Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+/* Header */
+.header {
+  background: linear-gradient(135deg, #1a2332 0%, #0f1419 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 1.25rem 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+}
+.header-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  justify-content: space-between;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--accent), #8b5cf6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: white;
+}
+.logo h1 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.logo span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+.search-box {
+  flex: 1;
+  min-width: 220px;
+  max-width: 480px;
+  position: relative;
+}
+.search-box input {
+  width: 100%;
+  padding: 0.65rem 1rem 0.65rem 2.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.search-box input::placeholder { color: var(--text-muted); }
+.search-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 1rem;
+}
+.stats {
+  display: flex;
+  gap: 1.25rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.stats strong {
+  color: var(--text);
+  font-weight: 600;
+}
+/* Layout */
+.main {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 1.5rem;
+}
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .sidebar { position: static !important; max-height: none !important; }
+}
+/* Sidebar */
+.sidebar {
+  position: sticky;
+  top: 90px;
+  align-self: start;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem;
+}
+.sidebar h2 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+  padding: 0 0.5rem;
+}
+.family-nav {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.family-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: background 0.15s;
+}
+.family-nav a:hover, .family-nav a.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.family-badge {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  background: var(--surface2);
+  min-width: 32px;
+  text-align: center;
+}
+.family-count {
+  margin-left: auto;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+}
+/* Content */
+.content { min-width: 0; }
+.intro {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.intro h2 { font-size: 1.1rem; margin-bottom: 0.4rem; }
+.intro p { color: var(--text-muted); font-size: 0.9rem; }
+.family-section {
+  margin-bottom: 2rem;
+  scroll-margin-top: 100px;
+}
+.family-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.family-header:hover { background: var(--surface2); }
+.family-header .chevron {
+  margin-left: auto;
+  transition: transform 0.25s;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+.family-section.collapsed .family-header .chevron { transform: rotate(-90deg); }
+.family-section.collapsed .family-body { display: none; }
+.family-id {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 0.95rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  color: white;
+}
+.family-title { font-size: 1.05rem; font-weight: 600; }
+.family-meta {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-left: 0.5rem;
+}
+.family-body {
+  border: 1px solid var(--border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  background: var(--bg);
+  overflow: hidden;
+}
+.control-item {
+  border-bottom: 1px solid var(--border);
+}
+.control-item:last-child { border-bottom: none; }
+.control-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.control-row:hover { background: var(--surface); }
+.control-id {
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+  min-width: 70px;
+  padding-top: 0.1rem;
+}
+.control-title {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+.enh-badge {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--surface2);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.control-chevron {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  transition: transform 0.2s;
+  padding-top: 0.2rem;
+}
+.control-item.expanded .control-chevron { transform: rotate(90deg); }
+.enhancements {
+  display: none;
+  padding: 0 1.25rem 0.85rem 1.25rem;
+  padding-left: calc(1.25rem + 70px + 0.75rem);
+}
+.control-item.expanded .enhancements { display: block; }
+.enh-item {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.45rem 0;
+  border-top: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+.enh-id {
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--warning);
+  min-width: 90px;
+  white-space: nowrap;
+}
+.enh-title { color: var(--text-muted); }
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-muted);
+}
+.highlight {
+  background: rgba(245, 158, 11, 0.35);
+  border-radius: 2px;
+  padding: 0 2px;
+}
+/* Family colors */
+.fid-AC { background: var(--family-ac); }
+.fid-AT { background: var(--family-at); }
+.fid-AU { background: var(--family-au); }
+.fid-CA { background: var(--family-ca); }
+.fid-CM { background: var(--family-cm); }
+.fid-CP { background: var(--family-cp); }
+.fid-IA { background: var(--family-ia); }
+.fid-IR { background: var(--family-ir); }
+.fid-MA { background: var(--family-ma); }
+.fid-MP { background: var(--family-mp); }
+.fid-PE { background: var(--family-pe); }
+.fid-PL { background: var(--family-pl); }
+.fid-PM { background: var(--family-pm); }
+.fid-PS { background: var(--family-ps); }
+.fid-PT { background: var(--family-pt); }
+.fid-RA { background: var(--family-ra); }
+.fid-SA { background: var(--family-sa); }
+.fid-SC { background: var(--family-sc); }
+.fid-SI { background: var(--family-si); }
+.fid-SR { background: var(--family-sr); }
+.footer {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+.footer a { color: var(--accent); text-decoration: none; }
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+.btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.btn:hover { background: var(--surface2); border-color: var(--accent); }
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">53</div>
+      <div>
+        <h1>NIST SP 800-53 Rev 5</h1>
+        <span>Security &amp; Privacy Control Catalog</span>
+      </div>
+    </div>
+    <div class="search-box">
+      <span class="search-icon">⌕</span>
+      <input type="search" id="search" placeholder="Search controls, enhancements, families…" autocomplete="off">
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+
+<main class="main">
+  <aside class="sidebar">
+    <h2>Control Families</h2>
+    <ul class="family-nav" id="familyNav"></ul>
+  </aside>
+  <div class="content">
+    <div class="intro">
+      <h2>NIST SP 800-53 Revision 5 Control Catalog</h2>
+      <p>Visualize all 20 control families, base controls, and control enhancements. Click a family or control to expand. Use the search box to filter by ID or title. Data sourced from the official NIST OSCAL catalog (version 5.2.0).</p>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="expandAll">Expand All Families</button>
+      <button class="btn" id="collapseAll">Collapse All Families</button>
+      <button class="btn" id="expandControls">Expand Controls with Enhancements</button>
+      <button class="btn" id="collapseControls">Collapse All Controls</button>
+    </div>
+    <div id="catalog"></div>
+    <div class="no-results" id="noResults" style="display:none">No controls match your search.</div>
+  </div>
+</main>
+<footer class="footer">
+  Data from <a href="https://csrc.nist.gov/publications/detail/sp/800-53/rev-5/final" target="_blank" rel="noopener">NIST SP 800-53 Rev. 5</a>
+  (OSCAL 5.2.0). This is an unofficial visualization for educational purposes.
+</footer>
+
+<script>
+const CATALOG = {"AC":{"name":"Access Control","controls":[{"id":"AC-01","title":"Policy and Procedures","enhancements":[]},{"id":"AC-02","title":"Account Management","enhancements":[{"id":"AC-02(01)","title":"Automated System Account Management"},{"id":"AC-02(02)","title":"Automated Temporary and Emergency Account Management"},{"id":"AC-02(03)","title":"Disable Accounts"},{"id":"AC-02(04)","title":"Automated Audit Actions"},{"id":"AC-02(05)","title":"Inactivity Logout"},{"id":"AC-02(06)","title":"Dynamic Privilege Management"},{"id":"AC-02(07)","title":"Privileged User Accounts"},{"id":"AC-02(08)","title":"Dynamic Account Management"},{"id":"AC-02(09)","title":"Restrictions on Use of Shared and Group Accounts"},{"id":"AC-02(10)","title":"Shared and Group Account Credential Change"},{"id":"AC-02(11)","title":"Usage Conditions"},{"id":"AC-02(12)","title":"Account Monitoring for Atypical Usage"},{"id":"AC-02(13)","title":"Disable Accounts for High-risk Individuals"}]},{"id":"AC-03","title":"Access Enforcement","enhancements":[{"id":"AC-03(01)","title":"Restricted Access to Privileged Functions"},{"id":"AC-03(02)","title":"Dual Authorization"},{"id":"AC-03(03)","title":"Mandatory Access Control"},{"id":"AC-03(04)","title":"Discretionary Access Control"},{"id":"AC-03(05)","title":"Security-relevant Information"},{"id":"AC-03(06)","title":"Protection of User and System Information"},{"id":"AC-03(07)","title":"Role-based Access Control"},{"id":"AC-03(08)","title":"Revocation of Access Authorizations"},{"id":"AC-03(09)","title":"Controlled Release"},{"id":"AC-03(10)","title":"Audited Override of Access Control Mechanisms"},{"id":"AC-03(11)","title":"Restrict Access to Specific Information Types"},{"id":"AC-03(12)","title":"Assert and Enforce Application Access"},{"id":"AC-03(13)","title":"Attribute-based Access Control"},{"id":"AC-03(14)","title":"Individual Access"},{"id":"AC-03(15)","title":"Discretionary and Mandatory Access Control"}]},{"id":"AC-04","title":"Information Flow Enforcement","enhancements":[{"id":"AC-04(01)","title":"Object Security and Privacy Attributes"},{"id":"AC-04(02)","title":"Processing Domains"},{"id":"AC-04(03)","title":"Dynamic Information Flow Control"},{"id":"AC-04(04)","title":"Flow Control of Encrypted Information"},{"id":"AC-04(05)","title":"Embedded Data Types"},{"id":"AC-04(06)","title":"Metadata"},{"id":"AC-04(07)","title":"One-way Flow Mechanisms"},{"id":"AC-04(08)","title":"Security and Privacy Policy Filters"},{"id":"AC-04(09)","title":"Human Reviews"},{"id":"AC-04(10)","title":"Enable and Disable Security or Privacy Policy Filters"},{"id":"AC-04(11)","title":"Configuration of Security or Privacy Policy Filters"},{"id":"AC-04(12)","title":"Data Type Identifiers"},{"id":"AC-04(13)","title":"Decomposition into Policy-relevant Subcomponents"},{"id":"AC-04(14)","title":"Security or Privacy Policy Filter Constraints"},{"id":"AC-04(15)","title":"Detection of Unsanctioned Information"},{"id":"AC-04(16)","title":"Information Transfers on Interconnected Systems"},{"id":"AC-04(17)","title":"Domain Authentication"},{"id":"AC-04(18)","title":"Security Attribute Binding"},{"id":"AC-04(19)","title":"Validation of Metadata"},{"id":"AC-04(20)","title":"Approved Solutions"},{"id":"AC-04(21)","title":"Physical or Logical Separation of Information Flows"},{"id":"AC-04(22)","title":"Access Only"},{"id":"AC-04(23)","title":"Modify Non-releasable Information"},{"id":"AC-04(24)","title":"Internal Normalized Format"},{"id":"AC-04(25)","title":"Data Sanitization"},{"id":"AC-04(26)","title":"Audit Filtering Actions"},{"id":"AC-04(27)","title":"Redundant/Independent Filtering Mechanisms"},{"id":"AC-04(28)","title":"Linear Filter Pipelines"},{"id":"AC-04(29)","title":"Filter Orchestration Engines"},{"id":"AC-04(30)","title":"Filter Mechanisms Using Multiple Processes"},{"id":"AC-04(31)","title":"Failed Content Transfer Prevention"},{"id":"AC-04(32)","title":"Process Requirements for Information Transfer"}]},{"id":"AC-05","title":"Separation of Duties","enhancements":[]},{"id":"AC-06","title":"Least Privilege","enhancements":[{"id":"AC-06(01)","title":"Authorize Access to Security Functions"},{"id":"AC-06(02)","title":"Non-privileged Access for Nonsecurity Functions"},{"id":"AC-06(03)","title":"Network Access to Privileged Commands"},{"id":"AC-06(04)","title":"Separate Processing Domains"},{"id":"AC-06(05)","title":"Privileged Accounts"},{"id":"AC-06(06)","title":"Privileged Access by Non-organizational Users"},{"id":"AC-06(07)","title":"Review of User Privileges"},{"id":"AC-06(08)","title":"Privilege Levels for Code Execution"},{"id":"AC-06(09)","title":"Log Use of Privileged Functions"},{"id":"AC-06(10)","title":"Prohibit Non-privileged Users from Executing Privileged Functions"}]},{"id":"AC-07","title":"Unsuccessful Logon Attempts","enhancements":[{"id":"AC-07(01)","title":"Automatic Account Lock"},{"id":"AC-07(02)","title":"Purge or Wipe Mobile Device"},{"id":"AC-07(03)","title":"Biometric Attempt Limiting"},{"id":"AC-07(04)","title":"Use of Alternate Authentication Factor"}]},{"id":"AC-08","title":"System Use Notification","enhancements":[]},{"id":"AC-09","title":"Previous Logon Notification","enhancements":[{"id":"AC-09(01)","title":"Unsuccessful Logons"},{"id":"AC-09(02)","title":"Successful and Unsuccessful Logons"},{"id":"AC-09(03)","title":"Notification of Account Changes"},{"id":"AC-09(04)","title":"Additional Logon Information"}]},{"id":"AC-10","title":"Concurrent Session Control","enhancements":[]},{"id":"AC-11","title":"Device Lock","enhancements":[{"id":"AC-11(01)","title":"Pattern-hiding Displays"}]},{"id":"AC-12","title":"Session Termination","enhancements":[{"id":"AC-12(01)","title":"User-initiated Logouts"},{"id":"AC-12(02)","title":"Termination Message"},{"id":"AC-12(03)","title":"Timeout Warning Message"}]},{"id":"AC-13","title":"Supervision and Review \u2014 Access Control","enhancements":[]},{"id":"AC-14","title":"Permitted Actions Without Identification or Authentication","enhancements":[{"id":"AC-14(01)","title":"Necessary Uses"}]},{"id":"AC-15","title":"Automated Marking","enhancements":[]},{"id":"AC-16","title":"Security and Privacy Attributes","enhancements":[{"id":"AC-16(01)","title":"Dynamic Attribute Association"},{"id":"AC-16(02)","title":"Attribute Value Changes by Authorized Individuals"},{"id":"AC-16(03)","title":"Maintenance of Attribute Associations by System"},{"id":"AC-16(04)","title":"Association of Attributes by Authorized Individuals"},{"id":"AC-16(05)","title":"Attribute Displays on Objects to Be Output"},{"id":"AC-16(06)","title":"Maintenance of Attribute Association"},{"id":"AC-16(07)","title":"Consistent Attribute Interpretation"},{"id":"AC-16(08)","title":"Association Techniques and Technologies"},{"id":"AC-16(09)","title":"Attribute Reassignment \u2014 Regrading Mechanisms"},{"id":"AC-16(10)","title":"Attribute Configuration by Authorized Individuals"}]},{"id":"AC-17","title":"Remote Access","enhancements":[{"id":"AC-17(01)","title":"Monitoring and Control"},{"id":"AC-17(02)","title":"Protection of Confidentiality and Integrity Using Encryption"},{"id":"AC-17(03)","title":"Managed Access Control Points"},{"id":"AC-17(04)","title":"Privileged Commands and Access"},{"id":"AC-17(05)","title":"Monitoring for Unauthorized Connections"},{"id":"AC-17(06)","title":"Protection of Mechanism Information"},{"id":"AC-17(07)","title":"Additional Protection for Security Function Access"},{"id":"AC-17(08)","title":"Disable Nonsecure Network Protocols"},{"id":"AC-17(09)","title":"Disconnect or Disable Access"},{"id":"AC-17(10)","title":"Authenticate Remote Commands"}]},{"id":"AC-18","title":"Wireless Access","enhancements":[{"id":"AC-18(01)","title":"Authentication and Encryption"},{"id":"AC-18(02)","title":"Monitoring Unauthorized Connections"},{"id":"AC-18(03)","title":"Disable Wireless Networking"},{"id":"AC-18(04)","title":"Restrict Configurations by Users"},{"id":"AC-18(05)","title":"Antennas and Transmission Power Levels"}]},{"id":"AC-19","title":"Access Control for Mobile Devices","enhancements":[{"id":"AC-19(01)","title":"Use of Writable and Portable Storage Devices"},{"id":"AC-19(02)","title":"Use of Personally Owned Portable Storage Devices"},{"id":"AC-19(03)","title":"Use of Portable Storage Devices with No Identifiable Owner"},{"id":"AC-19(04)","title":"Restrictions for Classified Information"},{"id":"AC-19(05)","title":"Full Device or Container-based Encryption"}]},{"id":"AC-20","title":"Use of External Systems","enhancements":[{"id":"AC-20(01)","title":"Limits on Authorized Use"},{"id":"AC-20(02)","title":"Portable Storage Devices \u2014 Restricted Use"},{"id":"AC-20(03)","title":"Non-organizationally Owned Systems \u2014 Restricted Use"},{"id":"AC-20(04)","title":"Network Accessible Storage Devices \u2014 Prohibited Use"},{"id":"AC-20(05)","title":"Portable Storage Devices \u2014 Prohibited Use"}]},{"id":"AC-21","title":"Information Sharing","enhancements":[{"id":"AC-21(01)","title":"Automated Decision Support"},{"id":"AC-21(02)","title":"Information Search and Retrieval"}]},{"id":"AC-22","title":"Publicly Accessible Content","enhancements":[]},{"id":"AC-23","title":"Data Mining Protection","enhancements":[]},{"id":"AC-24","title":"Access Control Decisions","enhancements":[{"id":"AC-24(01)","title":"Transmit Access Authorization Information"},{"id":"AC-24(02)","title":"No User or Process Identity"}]},{"id":"AC-25","title":"Reference Monitor","enhancements":[]}]},"AT":{"name":"Awareness and Training","controls":[{"id":"AT-01","title":"Policy and Procedures","enhancements":[]},{"id":"AT-02","title":"Literacy Training and Awareness","enhancements":[{"id":"AT-02(01)","title":"Practical Exercises"},{"id":"AT-02(02)","title":"Insider Threat"},{"id":"AT-02(03)","title":"Social Engineering and Mining"},{"id":"AT-02(04)","title":"Suspicious Communications and Anomalous System Behavior"},{"id":"AT-02(05)","title":"Advanced Persistent Threat"},{"id":"AT-02(06)","title":"Cyber Threat Environment"}]},{"id":"AT-03","title":"Role-based Training","enhancements":[{"id":"AT-03(01)","title":"Environmental Controls"},{"id":"AT-03(02)","title":"Physical Security Controls"},{"id":"AT-03(03)","title":"Practical Exercises"},{"id":"AT-03(04)","title":"Suspicious Communications and Anomalous System Behavior"},{"id":"AT-03(05)","title":"Processing Personally Identifiable Information"}]},{"id":"AT-04","title":"Training Records","enhancements":[]},{"id":"AT-05","title":"Contacts with Security Groups and Associations","enhancements":[]},{"id":"AT-06","title":"Training Feedback","enhancements":[]}]},"AU":{"name":"Audit and Accountability","controls":[{"id":"AU-01","title":"Policy and Procedures","enhancements":[]},{"id":"AU-02","title":"Event Logging","enhancements":[{"id":"AU-02(01)","title":"Compilation of Audit Records from Multiple Sources"},{"id":"AU-02(02)","title":"Selection of Audit Events by Component"},{"id":"AU-02(03)","title":"Reviews and Updates"},{"id":"AU-02(04)","title":"Privileged Functions"}]},{"id":"AU-03","title":"Content of Audit Records","enhancements":[{"id":"AU-03(01)","title":"Additional Audit Information"},{"id":"AU-03(02)","title":"Centralized Management of Planned Audit Record Content"},{"id":"AU-03(03)","title":"Limit Personally Identifiable Information Elements"}]},{"id":"AU-04","title":"Audit Log Storage Capacity","enhancements":[{"id":"AU-04(01)","title":"Transfer to Alternate Storage"}]},{"id":"AU-05","title":"Response to Audit Logging Process Failures","enhancements":[{"id":"AU-05(01)","title":"Storage Capacity Warning"},{"id":"AU-05(02)","title":"Real-time Alerts"},{"id":"AU-05(03)","title":"Configurable Traffic Volume Thresholds"},{"id":"AU-05(04)","title":"Shutdown on Failure"},{"id":"AU-05(05)","title":"Alternate Audit Logging Capability"}]},{"id":"AU-06","title":"Audit Record Review, Analysis, and Reporting","enhancements":[{"id":"AU-06(01)","title":"Automated Process Integration"},{"id":"AU-06(02)","title":"Automated Security Alerts"},{"id":"AU-06(03)","title":"Correlate Audit Record Repositories"},{"id":"AU-06(04)","title":"Central Review and Analysis"},{"id":"AU-06(05)","title":"Integrated Analysis of Audit Records"},{"id":"AU-06(06)","title":"Correlation with Physical Monitoring"},{"id":"AU-06(07)","title":"Permitted Actions"},{"id":"AU-06(08)","title":"Full Text Analysis of Privileged Commands"},{"id":"AU-06(09)","title":"Correlation with Information from Nontechnical Sources"},{"id":"AU-06(10)","title":"Audit Level Adjustment"}]},{"id":"AU-07","title":"Audit Record Reduction and Report Generation","enhancements":[{"id":"AU-07(01)","title":"Automatic Processing"},{"id":"AU-07(02)","title":"Automatic Sort and Search"}]},{"id":"AU-08","title":"Time Stamps","enhancements":[{"id":"AU-08(01)","title":"Synchronization with Authoritative Time Source"},{"id":"AU-08(02)","title":"Secondary Authoritative Time Source"}]},{"id":"AU-09","title":"Protection of Audit Information","enhancements":[{"id":"AU-09(01)","title":"Hardware Write-once Media"},{"id":"AU-09(02)","title":"Store on Separate Physical Systems or Components"},{"id":"AU-09(03)","title":"Cryptographic Protection"},{"id":"AU-09(04)","title":"Access by Subset of Privileged Users"},{"id":"AU-09(05)","title":"Dual Authorization"},{"id":"AU-09(06)","title":"Read-only Access"},{"id":"AU-09(07)","title":"Store on Component with Different Operating System"}]},{"id":"AU-10","title":"Non-repudiation","enhancements":[{"id":"AU-10(01)","title":"Association of Identities"},{"id":"AU-10(02)","title":"Validate Binding of Information Producer Identity"},{"id":"AU-10(03)","title":"Chain of Custody"},{"id":"AU-10(04)","title":"Validate Binding of Information Reviewer Identity"},{"id":"AU-10(05)","title":"Digital Signatures"}]},{"id":"AU-11","title":"Audit Record Retention","enhancements":[{"id":"AU-11(01)","title":"Long-term Retrieval Capability"}]},{"id":"AU-12","title":"Audit Record Generation","enhancements":[{"id":"AU-12(01)","title":"System-wide and Time-correlated Audit Trail"},{"id":"AU-12(02)","title":"Standardized Formats"},{"id":"AU-12(03)","title":"Changes by Authorized Individuals"},{"id":"AU-12(04)","title":"Query Parameter Audits of Personally Identifiable Information"}]},{"id":"AU-13","title":"Monitoring for Information Disclosure","enhancements":[{"id":"AU-13(01)","title":"Use of Automated Tools"},{"id":"AU-13(02)","title":"Review of Monitored Sites"},{"id":"AU-13(03)","title":"Unauthorized Replication of Information"}]},{"id":"AU-14","title":"Session Audit","enhancements":[{"id":"AU-14(01)","title":"System Start-up"},{"id":"AU-14(02)","title":"Capture and Record Content"},{"id":"AU-14(03)","title":"Remote Viewing and Listening"}]},{"id":"AU-15","title":"Alternate Audit Logging Capability","enhancements":[]},{"id":"AU-16","title":"Cross-organizational Audit Logging","enhancements":[{"id":"AU-16(01)","title":"Identity Preservation"},{"id":"AU-16(02)","title":"Sharing of Audit Information"},{"id":"AU-16(03)","title":"Disassociability"}]}]},"CA":{"name":"Assessment, Authorization, and Monitoring","controls":[{"id":"CA-01","title":"Policy and Procedures","enhancements":[]},{"id":"CA-02","title":"Control Assessments","enhancements":[{"id":"CA-02(01)","title":"Independent Assessors"},{"id":"CA-02(02)","title":"Specialized Assessments"},{"id":"CA-02(03)","title":"Leveraging Results from External Organizations"}]},{"id":"CA-03","title":"Information Exchange","enhancements":[{"id":"CA-03(01)","title":"Unclassified National Security System Connections"},{"id":"CA-03(02)","title":"Classified National Security System Connections"},{"id":"CA-03(03)","title":"Unclassified Non-national Security System Connections"},{"id":"CA-03(04)","title":"Connections to Public Networks"},{"id":"CA-03(05)","title":"Restrictions on External System Connections"},{"id":"CA-03(06)","title":"Transfer Authorizations"},{"id":"CA-03(07)","title":"Transitive Information Exchanges"}]},{"id":"CA-04","title":"Security Certification","enhancements":[]},{"id":"CA-05","title":"Plan of Action and Milestones","enhancements":[{"id":"CA-05(01)","title":"Automation Support for Accuracy and Currency"}]},{"id":"CA-06","title":"Authorization","enhancements":[{"id":"CA-06(01)","title":"Joint Authorization \u2014 Intra-organization"},{"id":"CA-06(02)","title":"Joint Authorization \u2014 Inter-organization"}]},{"id":"CA-07","title":"Continuous Monitoring","enhancements":[{"id":"CA-07(01)","title":"Independent Assessment"},{"id":"CA-07(02)","title":"Types of Assessments"},{"id":"CA-07(03)","title":"Trend Analyses"},{"id":"CA-07(04)","title":"Risk Monitoring"},{"id":"CA-07(05)","title":"Consistency Analysis"},{"id":"CA-07(06)","title":"Automation Support for Monitoring"}]},{"id":"CA-08","title":"Penetration Testing","enhancements":[{"id":"CA-08(01)","title":"Independent Penetration Testing Agent or Team"},{"id":"CA-08(02)","title":"Red Team Exercises"},{"id":"CA-08(03)","title":"Facility Penetration Testing"}]},{"id":"CA-09","title":"Internal System Connections","enhancements":[{"id":"CA-09(01)","title":"Compliance Checks"}]}]},"CM":{"name":"Configuration Management","controls":[{"id":"CM-01","title":"Policy and Procedures","enhancements":[]},{"id":"CM-02","title":"Baseline Configuration","enhancements":[{"id":"CM-02(01)","title":"Reviews and Updates"},{"id":"CM-02(02)","title":"Automation Support for Accuracy and Currency"},{"id":"CM-02(03)","title":"Retention of Previous Configurations"},{"id":"CM-02(04)","title":"Unauthorized Software"},{"id":"CM-02(05)","title":"Authorized Software"},{"id":"CM-02(06)","title":"Development and Test Environments"},{"id":"CM-02(07)","title":"Configure Systems and Components for High-risk Areas"}]},{"id":"CM-03","title":"Configuration Change Control","enhancements":[{"id":"CM-03(01)","title":"Automated Documentation, Notification, and Prohibition of Changes"},{"id":"CM-03(02)","title":"Testing, Validation, and Documentation of Changes"},{"id":"CM-03(03)","title":"Automated Change Implementation"},{"id":"CM-03(04)","title":"Security and Privacy Representatives"},{"id":"CM-03(05)","title":"Automated Security Response"},{"id":"CM-03(06)","title":"Cryptography Management"},{"id":"CM-03(07)","title":"Review System Changes"},{"id":"CM-03(08)","title":"Prevent or Restrict Configuration Changes"}]},{"id":"CM-04","title":"Impact Analyses","enhancements":[{"id":"CM-04(01)","title":"Separate Test Environments"},{"id":"CM-04(02)","title":"Verification of Controls"}]},{"id":"CM-05","title":"Access Restrictions for Change","enhancements":[{"id":"CM-05(01)","title":"Automated Access Enforcement and Audit Records"},{"id":"CM-05(02)","title":"Review System Changes"},{"id":"CM-05(03)","title":"Signed Components"},{"id":"CM-05(04)","title":"Dual Authorization"},{"id":"CM-05(05)","title":"Privilege Limitation for Production and Operation"},{"id":"CM-05(06)","title":"Limit Library Privileges"},{"id":"CM-05(07)","title":"Automatic Implementation of Security Safeguards"}]},{"id":"CM-06","title":"Configuration Settings","enhancements":[{"id":"CM-06(01)","title":"Automated Management, Application, and Verification"},{"id":"CM-06(02)","title":"Respond to Unauthorized Changes"},{"id":"CM-06(03)","title":"Unauthorized Change Detection"},{"id":"CM-06(04)","title":"Conformance Demonstration"}]},{"id":"CM-07","title":"Least Functionality","enhancements":[{"id":"CM-07(01)","title":"Periodic Review"},{"id":"CM-07(02)","title":"Prevent Program Execution"},{"id":"CM-07(03)","title":"Registration Compliance"},{"id":"CM-07(04)","title":"Unauthorized Software \u2014 Deny-by-exception"},{"id":"CM-07(05)","title":"Authorized Software \u2014 Allow-by-exception"},{"id":"CM-07(06)","title":"Confined Environments with Limited Privileges"},{"id":"CM-07(07)","title":"Code Execution in Protected Environments"},{"id":"CM-07(08)","title":"Binary or Machine Executable Code"},{"id":"CM-07(09)","title":"Prohibiting The Use of Unauthorized Hardware"}]},{"id":"CM-08","title":"System Component Inventory","enhancements":[{"id":"CM-08(01)","title":"Updates During Installation and Removal"},{"id":"CM-08(02)","title":"Automated Maintenance"},{"id":"CM-08(03)","title":"Automated Unauthorized Component Detection"},{"id":"CM-08(04)","title":"Accountability Information"},{"id":"CM-08(05)","title":"No Duplicate Accounting of Components"},{"id":"CM-08(06)","title":"Assessed Configurations and Approved Deviations"},{"id":"CM-08(07)","title":"Centralized Repository"},{"id":"CM-08(08)","title":"Automated Location Tracking"},{"id":"CM-08(09)","title":"Assignment of Components to Systems"}]},{"id":"CM-09","title":"Configuration Management Plan","enhancements":[{"id":"CM-09(01)","title":"Assignment of Responsibility"}]},{"id":"CM-10","title":"Software Usage Restrictions","enhancements":[{"id":"CM-10(01)","title":"Open-source Software"}]},{"id":"CM-11","title":"User-installed Software","enhancements":[{"id":"CM-11(01)","title":"Alerts for Unauthorized Installations"},{"id":"CM-11(02)","title":"Software Installation with Privileged Status"},{"id":"CM-11(03)","title":"Automated Enforcement and Monitoring"}]},{"id":"CM-12","title":"Information Location","enhancements":[{"id":"CM-12(01)","title":"Automated Tools to Support Information Location"}]},{"id":"CM-13","title":"Data Action Mapping","enhancements":[]},{"id":"CM-14","title":"Signed Components","enhancements":[]}]},"CP":{"name":"Contingency Planning","controls":[{"id":"CP-01","title":"Policy and Procedures","enhancements":[]},{"id":"CP-02","title":"Contingency Plan","enhancements":[{"id":"CP-02(01)","title":"Coordinate with Related Plans"},{"id":"CP-02(02)","title":"Capacity Planning"},{"id":"CP-02(03)","title":"Resume Mission and Business Functions"},{"id":"CP-02(04)","title":"Resume All Mission and Business Functions"},{"id":"CP-02(05)","title":"Continue Mission and Business Functions"},{"id":"CP-02(06)","title":"Alternate Processing and Storage Sites"},{"id":"CP-02(07)","title":"Coordinate with External Service Providers"},{"id":"CP-02(08)","title":"Identify Critical Assets"}]},{"id":"CP-03","title":"Contingency Training","enhancements":[{"id":"CP-03(01)","title":"Simulated Events"},{"id":"CP-03(02)","title":"Mechanisms Used in Training Environments"}]},{"id":"CP-04","title":"Contingency Plan Testing","enhancements":[{"id":"CP-04(01)","title":"Coordinate with Related Plans"},{"id":"CP-04(02)","title":"Alternate Processing Site"},{"id":"CP-04(03)","title":"Automated Testing"},{"id":"CP-04(04)","title":"Full Recovery and Reconstitution"},{"id":"CP-04(05)","title":"Self-challenge"}]},{"id":"CP-05","title":"Contingency Plan Update","enhancements":[]},{"id":"CP-06","title":"Alternate Storage Site","enhancements":[{"id":"CP-06(01)","title":"Separation from Primary Site"},{"id":"CP-06(02)","title":"Recovery Time and Recovery Point Objectives"},{"id":"CP-06(03)","title":"Accessibility"}]},{"id":"CP-07","title":"Alternate Processing Site","enhancements":[{"id":"CP-07(01)","title":"Separation from Primary Site"},{"id":"CP-07(02)","title":"Accessibility"},{"id":"CP-07(03)","title":"Priority of Service"},{"id":"CP-07(04)","title":"Preparation for Use"},{"id":"CP-07(05)","title":"Equivalent Information Security Safeguards"},{"id":"CP-07(06)","title":"Inability to Return to Primary Site"}]},{"id":"CP-08","title":"Telecommunications Services","enhancements":[{"id":"CP-08(01)","title":"Priority of Service Provisions"},{"id":"CP-08(02)","title":"Single Points of Failure"},{"id":"CP-08(03)","title":"Separation of Primary and Alternate Providers"},{"id":"CP-08(04)","title":"Provider Contingency Plan"},{"id":"CP-08(05)","title":"Alternate Telecommunication Service Testing"}]},{"id":"CP-09","title":"System Backup","enhancements":[{"id":"CP-09(01)","title":"Testing for Reliability and Integrity"},{"id":"CP-09(02)","title":"Test Restoration Using Sampling"},{"id":"CP-09(03)","title":"Separate Storage for Critical Information"},{"id":"CP-09(04)","title":"Protection from Unauthorized Modification"},{"id":"CP-09(05)","title":"Transfer to Alternate Storage Site"},{"id":"CP-09(06)","title":"Redundant Secondary System"},{"id":"CP-09(07)","title":"Dual Authorization for Deletion or Destruction"},{"id":"CP-09(08)","title":"Cryptographic Protection"}]},{"id":"CP-10","title":"System Recovery and Reconstitution","enhancements":[{"id":"CP-10(01)","title":"Contingency Plan Testing"},{"id":"CP-10(02)","title":"Transaction Recovery"},{"id":"CP-10(03)","title":"Compensating Security Controls"},{"id":"CP-10(04)","title":"Restore Within Time Period"},{"id":"CP-10(05)","title":"Failover Capability"},{"id":"CP-10(06)","title":"Component Protection"}]},{"id":"CP-11","title":"Alternate Communications Protocols","enhancements":[]},{"id":"CP-12","title":"Safe Mode","enhancements":[]},{"id":"CP-13","title":"Alternative Security Mechanisms","enhancements":[]}]},"IA":{"name":"Identification and Authentication","controls":[{"id":"IA-01","title":"Policy and Procedures","enhancements":[]},{"id":"IA-02","title":"Identification and Authentication (Organizational Users)","enhancements":[{"id":"IA-02(01)","title":"Multi-factor Authentication to Privileged Accounts"},{"id":"IA-02(02)","title":"Multi-factor Authentication to Non-privileged Accounts"},{"id":"IA-02(03)","title":"Local Access to Privileged Accounts"},{"id":"IA-02(04)","title":"Local Access to Non-privileged Accounts"},{"id":"IA-02(05)","title":"Individual Authentication with Group Authentication"},{"id":"IA-02(06)","title":"Access to Accounts \u2014separate Device"},{"id":"IA-02(07)","title":"Network Access to Non-privileged Accounts \u2014 Separate Device"},{"id":"IA-02(08)","title":"Access to Accounts \u2014 Replay Resistant"},{"id":"IA-02(09)","title":"Network Access to Non-privileged Accounts \u2014 Replay Resistant"},{"id":"IA-02(10)","title":"Single Sign-on"},{"id":"IA-02(11)","title":"Remote Access \u2014 Separate Device"},{"id":"IA-02(12)","title":"Acceptance of PIV Credentials"},{"id":"IA-02(13)","title":"Out-of-band Authentication"}]},{"id":"IA-03","title":"Device Identification and Authentication","enhancements":[{"id":"IA-03(01)","title":"Cryptographic Bidirectional Authentication"},{"id":"IA-03(02)","title":"Cryptographic Bidirectional Network Authentication"},{"id":"IA-03(03)","title":"Dynamic Address Allocation"},{"id":"IA-03(04)","title":"Device Attestation"}]},{"id":"IA-04","title":"Identifier Management","enhancements":[{"id":"IA-04(01)","title":"Prohibit Account Identifiers as Public Identifiers"},{"id":"IA-04(02)","title":"Supervisor Authorization"},{"id":"IA-04(03)","title":"Multiple Forms of Certification"},{"id":"IA-04(04)","title":"Identify User Status"},{"id":"IA-04(05)","title":"Dynamic Management"},{"id":"IA-04(06)","title":"Cross-organization Management"},{"id":"IA-04(07)","title":"In-person Registration"},{"id":"IA-04(08)","title":"Pairwise Pseudonymous Identifiers"},{"id":"IA-04(09)","title":"Attribute Maintenance and Protection"}]},{"id":"IA-05","title":"Authenticator Management","enhancements":[{"id":"IA-05(01)","title":"Password-based Authentication"},{"id":"IA-05(02)","title":"Public Key-based Authentication"},{"id":"IA-05(03)","title":"In-person or Trusted External Party Registration"},{"id":"IA-05(04)","title":"Automated Support for Password Strength Determination"},{"id":"IA-05(05)","title":"Change Authenticators Prior to Delivery"},{"id":"IA-05(06)","title":"Protection of Authenticators"},{"id":"IA-05(07)","title":"No Embedded Unencrypted Static Authenticators"},{"id":"IA-05(08)","title":"Multiple System Accounts"},{"id":"IA-05(09)","title":"Federated Credential Management"},{"id":"IA-05(10)","title":"Dynamic Credential Binding"},{"id":"IA-05(11)","title":"Hardware Token-based Authentication"},{"id":"IA-05(12)","title":"Biometric Authentication Performance"},{"id":"IA-05(13)","title":"Expiration of Cached Authenticators"},{"id":"IA-05(14)","title":"Managing Content of PKI Trust Stores"},{"id":"IA-05(15)","title":"GSA-approved Products and Services"},{"id":"IA-05(16)","title":"In-person or Trusted External Party Authenticator Issuance"},{"id":"IA-05(17)","title":"Presentation Attack Detection for Biometric Authenticators"},{"id":"IA-05(18)","title":"Password Managers"}]},{"id":"IA-06","title":"Authentication Feedback","enhancements":[]},{"id":"IA-07","title":"Cryptographic Module Authentication","enhancements":[]},{"id":"IA-08","title":"Identification and Authentication (Non-organizational Users)","enhancements":[{"id":"IA-08(01)","title":"Acceptance of PIV Credentials from Other Agencies"},{"id":"IA-08(02)","title":"Acceptance of External Authenticators"},{"id":"IA-08(03)","title":"Use of FICAM-approved Products"},{"id":"IA-08(04)","title":"Use of Defined Profiles"},{"id":"IA-08(05)","title":"Acceptance of PIV-I Credentials"},{"id":"IA-08(06)","title":"Disassociability"}]},{"id":"IA-09","title":"Service Identification and Authentication","enhancements":[{"id":"IA-09(01)","title":"Information Exchange"},{"id":"IA-09(02)","title":"Transmission of Decisions"}]},{"id":"IA-10","title":"Adaptive Authentication","enhancements":[]},{"id":"IA-11","title":"Re-authentication","enhancements":[]},{"id":"IA-12","title":"Identity Proofing","enhancements":[{"id":"IA-12(01)","title":"Supervisor Authorization"},{"id":"IA-12(02)","title":"Identity Evidence"},{"id":"IA-12(03)","title":"Identity Evidence Validation and Verification"},{"id":"IA-12(04)","title":"In-person Validation and Verification"},{"id":"IA-12(05)","title":"Address Confirmation"},{"id":"IA-12(06)","title":"Accept Externally-proofed Identities"}]},{"id":"IA-13","title":"Identity Providers and Authorization Servers","enhancements":[{"id":"IA-13(01)","title":"Protection of Cryptographic Keys"},{"id":"IA-13(02)","title":"Verification of Identity Assertions and Access Tokens"},{"id":"IA-13(03)","title":"Token Management"}]}]},"IR":{"name":"Incident Response","controls":[{"id":"IR-01","title":"Policy and Procedures","enhancements":[]},{"id":"IR-02","title":"Incident Response Training","enhancements":[{"id":"IR-02(01)","title":"Simulated Events"},{"id":"IR-02(02)","title":"Automated Training Environments"},{"id":"IR-02(03)","title":"Breach"}]},{"id":"IR-03","title":"Incident Response Testing","enhancements":[{"id":"IR-03(01)","title":"Automated Testing"},{"id":"IR-03(02)","title":"Coordination with Related Plans"},{"id":"IR-03(03)","title":"Continuous Improvement"}]},{"id":"IR-04","title":"Incident Handling","enhancements":[{"id":"IR-04(01)","title":"Automated Incident Handling Processes"},{"id":"IR-04(02)","title":"Dynamic Reconfiguration"},{"id":"IR-04(03)","title":"Continuity of Operations"},{"id":"IR-04(04)","title":"Information Correlation"},{"id":"IR-04(05)","title":"Automatic Disabling of System"},{"id":"IR-04(06)","title":"Insider Threats"},{"id":"IR-04(07)","title":"Insider Threats \u2014 Intra-organization Coordination"},{"id":"IR-04(08)","title":"Correlation with External Organizations"},{"id":"IR-04(09)","title":"Dynamic Response Capability"},{"id":"IR-04(10)","title":"Supply Chain Coordination"},{"id":"IR-04(11)","title":"Integrated Incident Response Team"},{"id":"IR-04(12)","title":"Malicious Code and Forensic Analysis"},{"id":"IR-04(13)","title":"Behavior Analysis"},{"id":"IR-04(14)","title":"Security Operations Center"},{"id":"IR-04(15)","title":"Public Relations and Reputation Repair"}]},{"id":"IR-05","title":"Incident Monitoring","enhancements":[{"id":"IR-05(01)","title":"Automated Tracking, Data Collection, and Analysis"}]},{"id":"IR-06","title":"Incident Reporting","enhancements":[{"id":"IR-06(01)","title":"Automated Reporting"},{"id":"IR-06(02)","title":"Vulnerabilities Related to Incidents"},{"id":"IR-06(03)","title":"Supply Chain Coordination"}]},{"id":"IR-07","title":"Incident Response Assistance","enhancements":[{"id":"IR-07(01)","title":"Automation Support for Availability of Information and Support"},{"id":"IR-07(02)","title":"Coordination with External Providers"}]},{"id":"IR-08","title":"Incident Response Plan","enhancements":[{"id":"IR-08(01)","title":"Breaches"}]},{"id":"IR-09","title":"Information Spillage Response","enhancements":[{"id":"IR-09(01)","title":"Responsible Personnel"},{"id":"IR-09(02)","title":"Training"},{"id":"IR-09(03)","title":"Post-spill Operations"},{"id":"IR-09(04)","title":"Exposure to Unauthorized Personnel"}]},{"id":"IR-10","title":"Integrated Information Security Analysis Team","enhancements":[]}]},"MA":{"name":"Maintenance","controls":[{"id":"MA-01","title":"Policy and Procedures","enhancements":[]},{"id":"MA-02","title":"Controlled Maintenance","enhancements":[{"id":"MA-02(01)","title":"Record Content"},{"id":"MA-02(02)","title":"Automated Maintenance Activities"}]},{"id":"MA-03","title":"Maintenance Tools","enhancements":[{"id":"MA-03(01)","title":"Inspect Tools"},{"id":"MA-03(02)","title":"Inspect Media"},{"id":"MA-03(03)","title":"Prevent Unauthorized Removal"},{"id":"MA-03(04)","title":"Restricted Tool Use"},{"id":"MA-03(05)","title":"Execution with Privilege"},{"id":"MA-03(06)","title":"Software Updates and Patches"}]},{"id":"MA-04","title":"Nonlocal Maintenance","enhancements":[{"id":"MA-04(01)","title":"Logging and Review"},{"id":"MA-04(02)","title":"Document Nonlocal Maintenance"},{"id":"MA-04(03)","title":"Comparable Security and Sanitization"},{"id":"MA-04(04)","title":"Authentication and Separation of Maintenance Sessions"},{"id":"MA-04(05)","title":"Approvals and Notifications"},{"id":"MA-04(06)","title":"Cryptographic Protection"},{"id":"MA-04(07)","title":"Disconnect Verification"}]},{"id":"MA-05","title":"Maintenance Personnel","enhancements":[{"id":"MA-05(01)","title":"Individuals Without Appropriate Access"},{"id":"MA-05(02)","title":"Security Clearances for Classified Systems"},{"id":"MA-05(03)","title":"Citizenship Requirements for Classified Systems"},{"id":"MA-05(04)","title":"Foreign Nationals"},{"id":"MA-05(05)","title":"Non-system Maintenance"}]},{"id":"MA-06","title":"Timely Maintenance","enhancements":[{"id":"MA-06(01)","title":"Preventive Maintenance"},{"id":"MA-06(02)","title":"Predictive Maintenance"},{"id":"MA-06(03)","title":"Automated Support for Predictive Maintenance"}]},{"id":"MA-07","title":"Field Maintenance","enhancements":[]}]},"MP":{"name":"Media Protection","controls":[{"id":"MP-01","title":"Policy and Procedures","enhancements":[]},{"id":"MP-02","title":"Media Access","enhancements":[{"id":"MP-02(01)","title":"Automated Restricted Access"},{"id":"MP-02(02)","title":"Cryptographic Protection"}]},{"id":"MP-03","title":"Media Marking","enhancements":[]},{"id":"MP-04","title":"Media Storage","enhancements":[{"id":"MP-04(01)","title":"Cryptographic Protection"},{"id":"MP-04(02)","title":"Automated Restricted Access"}]},{"id":"MP-05","title":"Media Transport","enhancements":[{"id":"MP-05(01)","title":"Protection Outside of Controlled Areas"},{"id":"MP-05(02)","title":"Documentation of Activities"},{"id":"MP-05(03)","title":"Custodians"},{"id":"MP-05(04)","title":"Cryptographic Protection"}]},{"id":"MP-06","title":"Media Sanitization","enhancements":[{"id":"MP-06(01)","title":"Review, Approve, Track, Document, and Verify"},{"id":"MP-06(02)","title":"Equipment Testing"},{"id":"MP-06(03)","title":"Nondestructive Techniques"},{"id":"MP-06(04)","title":"Controlled Unclassified Information"},{"id":"MP-06(05)","title":"Classified Information"},{"id":"MP-06(06)","title":"Media Destruction"},{"id":"MP-06(07)","title":"Dual Authorization"},{"id":"MP-06(08)","title":"Remote Purging or Wiping of Information"}]},{"id":"MP-07","title":"Media Use","enhancements":[{"id":"MP-07(01)","title":"Prohibit Use Without Owner"},{"id":"MP-07(02)","title":"Prohibit Use of Sanitization-resistant Media"}]},{"id":"MP-08","title":"Media Downgrading","enhancements":[{"id":"MP-08(01)","title":"Documentation of Process"},{"id":"MP-08(02)","title":"Equipment Testing"},{"id":"MP-08(03)","title":"Controlled Unclassified Information"},{"id":"MP-08(04)","title":"Classified Information"}]}]},"PE":{"name":"Physical and Environmental Protection","controls":[{"id":"PE-01","title":"Policy and Procedures","enhancements":[]},{"id":"PE-02","title":"Physical Access Authorizations","enhancements":[{"id":"PE-02(01)","title":"Access by Position or Role"},{"id":"PE-02(02)","title":"Two Forms of Identification"},{"id":"PE-02(03)","title":"Restrict Unescorted Access"}]},{"id":"PE-03","title":"Physical Access Control","enhancements":[{"id":"PE-03(01)","title":"System Access"},{"id":"PE-03(02)","title":"Facility and Systems"},{"id":"PE-03(03)","title":"Continuous Guards"},{"id":"PE-03(04)","title":"Lockable Casings"},{"id":"PE-03(05)","title":"Tamper Protection"},{"id":"PE-03(06)","title":"Facility Penetration Testing"},{"id":"PE-03(07)","title":"Physical Barriers"},{"id":"PE-03(08)","title":"Access Control Vestibules"}]},{"id":"PE-04","title":"Access Control for Transmission","enhancements":[]},{"id":"PE-05","title":"Access Control for Output Devices","enhancements":[{"id":"PE-05(01)","title":"Access to Output by Authorized Individuals"},{"id":"PE-05(02)","title":"Link to Individual Identity"},{"id":"PE-05(03)","title":"Marking Output Devices"}]},{"id":"PE-06","title":"Monitoring Physical Access","enhancements":[{"id":"PE-06(01)","title":"Intrusion Alarms and Surveillance Equipment"},{"id":"PE-06(02)","title":"Automated Intrusion Recognition and Responses"},{"id":"PE-06(03)","title":"Video Surveillance"},{"id":"PE-06(04)","title":"Monitoring Physical Access to Systems"}]},{"id":"PE-07","title":"Visitor Control","enhancements":[]},{"id":"PE-08","title":"Visitor Access Records","enhancements":[{"id":"PE-08(01)","title":"Automated Records Maintenance and Review"},{"id":"PE-08(02)","title":"Physical Access Records"},{"id":"PE-08(03)","title":"Limit Personally Identifiable Information Elements"}]},{"id":"PE-09","title":"Power Equipment and Cabling","enhancements":[{"id":"PE-09(01)","title":"Redundant Cabling"},{"id":"PE-09(02)","title":"Automatic Voltage Controls"}]},{"id":"PE-10","title":"Emergency Shutoff","enhancements":[{"id":"PE-10(01)","title":"Accidental and Unauthorized Activation"}]},{"id":"PE-11","title":"Emergency Power","enhancements":[{"id":"PE-11(01)","title":"Alternate Power Supply \u2014 Minimal Operational Capability"},{"id":"PE-11(02)","title":"Alternate Power Supply \u2014 Self-contained"}]},{"id":"PE-12","title":"Emergency Lighting","enhancements":[{"id":"PE-12(01)","title":"Essential Mission and Business Functions"}]},{"id":"PE-13","title":"Fire Protection","enhancements":[{"id":"PE-13(01)","title":"Detection Systems \u2014 Automatic Activation and Notification"},{"id":"PE-13(02)","title":"Suppression Systems \u2014 Automatic Activation and Notification"},{"id":"PE-13(03)","title":"Automatic Fire Suppression"},{"id":"PE-13(04)","title":"Inspections"}]},{"id":"PE-14","title":"Environmental Controls","enhancements":[{"id":"PE-14(01)","title":"Automatic Controls"},{"id":"PE-14(02)","title":"Monitoring with Alarms and Notifications"}]},{"id":"PE-15","title":"Water Damage Protection","enhancements":[{"id":"PE-15(01)","title":"Automation Support"}]},{"id":"PE-16","title":"Delivery and Removal","enhancements":[]},{"id":"PE-17","title":"Alternate Work Site","enhancements":[]},{"id":"PE-18","title":"Location of System Components","enhancements":[{"id":"PE-18(01)","title":"Facility Site"}]},{"id":"PE-19","title":"Information Leakage","enhancements":[{"id":"PE-19(01)","title":"National Emissions Policies and Procedures"}]},{"id":"PE-20","title":"Asset Monitoring and Tracking","enhancements":[]},{"id":"PE-21","title":"Electromagnetic Pulse Protection","enhancements":[]},{"id":"PE-22","title":"Component Marking","enhancements":[]},{"id":"PE-23","title":"Facility Location","enhancements":[]}]},"PL":{"name":"Planning","controls":[{"id":"PL-01","title":"Policy and Procedures","enhancements":[]},{"id":"PL-02","title":"System Security and Privacy Plans","enhancements":[{"id":"PL-02(01)","title":"Concept of Operations"},{"id":"PL-02(02)","title":"Functional Architecture"},{"id":"PL-02(03)","title":"Plan and Coordinate with Other Organizational Entities"}]},{"id":"PL-03","title":"System Security Plan Update","enhancements":[]},{"id":"PL-04","title":"Rules of Behavior","enhancements":[{"id":"PL-04(01)","title":"Social Media and External Site/Application Usage Restrictions"}]},{"id":"PL-05","title":"Privacy Impact Assessment","enhancements":[]},{"id":"PL-06","title":"Security-related Activity Planning","enhancements":[]},{"id":"PL-07","title":"Concept of Operations","enhancements":[]},{"id":"PL-08","title":"Security and Privacy Architectures","enhancements":[{"id":"PL-08(01)","title":"Defense in Depth"},{"id":"PL-08(02)","title":"Supplier Diversity"}]},{"id":"PL-09","title":"Central Management","enhancements":[]},{"id":"PL-10","title":"Baseline Selection","enhancements":[]},{"id":"PL-11","title":"Baseline Tailoring","enhancements":[]}]},"PM":{"name":"Program Management","controls":[{"id":"PM-01","title":"Information Security Program Plan","enhancements":[]},{"id":"PM-02","title":"Information Security Program Leadership Role","enhancements":[]},{"id":"PM-03","title":"Information Security and Privacy Resources","enhancements":[]},{"id":"PM-04","title":"Plan of Action and Milestones Process","enhancements":[]},{"id":"PM-05","title":"System Inventory","enhancements":[{"id":"PM-05(01)","title":"Inventory of Personally Identifiable Information"}]},{"id":"PM-06","title":"Measures of Performance","enhancements":[]},{"id":"PM-07","title":"Enterprise Architecture","enhancements":[{"id":"PM-07(01)","title":"Offloading"}]},{"id":"PM-08","title":"Critical Infrastructure Plan","enhancements":[]},{"id":"PM-09","title":"Risk Management Strategy","enhancements":[]},{"id":"PM-10","title":"Authorization Process","enhancements":[]},{"id":"PM-11","title":"Mission and Business Process Definition","enhancements":[]},{"id":"PM-12","title":"Insider Threat Program","enhancements":[]},{"id":"PM-13","title":"Security and Privacy Workforce","enhancements":[]},{"id":"PM-14","title":"Testing, Training, and Monitoring","enhancements":[]},{"id":"PM-15","title":"Security and Privacy Groups and Associations","enhancements":[]},{"id":"PM-16","title":"Threat Awareness Program","enhancements":[{"id":"PM-16(01)","title":"Automated Means for Sharing Threat Intelligence"}]},{"id":"PM-17","title":"Protecting Controlled Unclassified Information on External Systems","enhancements":[]},{"id":"PM-18","title":"Privacy Program Plan","enhancements":[]},{"id":"PM-19","title":"Privacy Program Leadership Role","enhancements":[]},{"id":"PM-20","title":"Dissemination of Privacy Program Information","enhancements":[{"id":"PM-20(01)","title":"Privacy Policies on Websites, Applications, and Digital Services"}]},{"id":"PM-21","title":"Accounting of Disclosures","enhancements":[]},{"id":"PM-22","title":"Personally Identifiable Information Quality Management","enhancements":[]},{"id":"PM-23","title":"Data Governance Body","enhancements":[]},{"id":"PM-24","title":"Data Integrity Board","enhancements":[]},{"id":"PM-25","title":"Minimization of Personally Identifiable Information Used in Testing, Training, and Research","enhancements":[]},{"id":"PM-26","title":"Complaint Management","enhancements":[]},{"id":"PM-27","title":"Privacy Reporting","enhancements":[]},{"id":"PM-28","title":"Risk Framing","enhancements":[]},{"id":"PM-29","title":"Risk Management Program Leadership Roles","enhancements":[]},{"id":"PM-30","title":"Supply Chain Risk Management Strategy","enhancements":[{"id":"PM-30(01)","title":"Suppliers of Critical or Mission-essential Items"}]},{"id":"PM-31","title":"Continuous Monitoring Strategy","enhancements":[]},{"id":"PM-32","title":"Purposing","enhancements":[]}]},"PS":{"name":"Personnel Security","controls":[{"id":"PS-01","title":"Policy and Procedures","enhancements":[]},{"id":"PS-02","title":"Position Risk Designation","enhancements":[]},{"id":"PS-03","title":"Personnel Screening","enhancements":[{"id":"PS-03(01)","title":"Classified Information"},{"id":"PS-03(02)","title":"Formal Indoctrination"},{"id":"PS-03(03)","title":"Information Requiring Special Protective Measures"},{"id":"PS-03(04)","title":"Citizenship Requirements"}]},{"id":"PS-04","title":"Personnel Termination","enhancements":[{"id":"PS-04(01)","title":"Post-employment Requirements"},{"id":"PS-04(02)","title":"Automated Actions"}]},{"id":"PS-05","title":"Personnel Transfer","enhancements":[]},{"id":"PS-06","title":"Access Agreements","enhancements":[{"id":"PS-06(01)","title":"Information Requiring Special Protection"},{"id":"PS-06(02)","title":"Classified Information Requiring Special Protection"},{"id":"PS-06(03)","title":"Post-employment Requirements"}]},{"id":"PS-07","title":"External Personnel Security","enhancements":[]},{"id":"PS-08","title":"Personnel Sanctions","enhancements":[]},{"id":"PS-09","title":"Position Descriptions","enhancements":[]}]},"PT":{"name":"Personally Identifiable Information Processing and Transparency","controls":[{"id":"PT-01","title":"Policy and Procedures","enhancements":[]},{"id":"PT-02","title":"Authority to Process Personally Identifiable Information","enhancements":[{"id":"PT-02(01)","title":"Data Tagging"},{"id":"PT-02(02)","title":"Automation"}]},{"id":"PT-03","title":"Personally Identifiable Information Processing Purposes","enhancements":[{"id":"PT-03(01)","title":"Data Tagging"},{"id":"PT-03(02)","title":"Automation"}]},{"id":"PT-04","title":"Consent","enhancements":[{"id":"PT-04(01)","title":"Tailored Consent"},{"id":"PT-04(02)","title":"Just-in-time Consent"},{"id":"PT-04(03)","title":"Revocation"}]},{"id":"PT-05","title":"Privacy Notice","enhancements":[{"id":"PT-05(01)","title":"Just-in-time Notice"},{"id":"PT-05(02)","title":"Privacy Act Statements"}]},{"id":"PT-06","title":"System of Records Notice","enhancements":[{"id":"PT-06(01)","title":"Routine Uses"},{"id":"PT-06(02)","title":"Exemption Rules"}]},{"id":"PT-07","title":"Specific Categories of Personally Identifiable Information","enhancements":[{"id":"PT-07(01)","title":"Social Security Numbers"},{"id":"PT-07(02)","title":"First Amendment Information"}]},{"id":"PT-08","title":"Computer Matching Requirements","enhancements":[]}]},"RA":{"name":"Risk Assessment","controls":[{"id":"RA-01","title":"Policy and Procedures","enhancements":[]},{"id":"RA-02","title":"Security Categorization","enhancements":[{"id":"RA-02(01)","title":"Impact-level Prioritization"}]},{"id":"RA-03","title":"Risk Assessment","enhancements":[{"id":"RA-03(01)","title":"Supply Chain Risk Assessment"},{"id":"RA-03(02)","title":"Use of All-source Intelligence"},{"id":"RA-03(03)","title":"Dynamic Threat Awareness"},{"id":"RA-03(04)","title":"Predictive Cyber Analytics"}]},{"id":"RA-04","title":"Risk Assessment Update","enhancements":[]},{"id":"RA-05","title":"Vulnerability Monitoring and Scanning","enhancements":[{"id":"RA-05(01)","title":"Update Tool Capability"},{"id":"RA-05(02)","title":"Update Vulnerabilities to Be Scanned"},{"id":"RA-05(03)","title":"Breadth and Depth of Coverage"},{"id":"RA-05(04)","title":"Discoverable Information"},{"id":"RA-05(05)","title":"Privileged Access"},{"id":"RA-05(06)","title":"Automated Trend Analyses"},{"id":"RA-05(07)","title":"Automated Detection and Notification of Unauthorized Components"},{"id":"RA-05(08)","title":"Review Historic Audit Logs"},{"id":"RA-05(09)","title":"Penetration Testing and Analyses"},{"id":"RA-05(10)","title":"Correlate Scanning Information"},{"id":"RA-05(11)","title":"Public Disclosure Program"}]},{"id":"RA-06","title":"Technical Surveillance Countermeasures Survey","enhancements":[]},{"id":"RA-07","title":"Risk Response","enhancements":[]},{"id":"RA-08","title":"Privacy Impact Assessments","enhancements":[]},{"id":"RA-09","title":"Criticality Analysis","enhancements":[]},{"id":"RA-10","title":"Threat Hunting","enhancements":[]}]},"SA":{"name":"System and Services Acquisition","controls":[{"id":"SA-01","title":"Policy and Procedures","enhancements":[]},{"id":"SA-02","title":"Allocation of Resources","enhancements":[]},{"id":"SA-03","title":"System Development Life Cycle","enhancements":[{"id":"SA-03(01)","title":"Manage Preproduction Environment"},{"id":"SA-03(02)","title":"Use of Live or Operational Data"},{"id":"SA-03(03)","title":"Technology Refresh"}]},{"id":"SA-04","title":"Acquisition Process","enhancements":[{"id":"SA-04(01)","title":"Functional Properties of Controls"},{"id":"SA-04(02)","title":"Design and Implementation Information for Controls"},{"id":"SA-04(03)","title":"Development Methods, Techniques, and Practices"},{"id":"SA-04(04)","title":"Assignment of Components to Systems"},{"id":"SA-04(05)","title":"System, Component, and Service Configurations"},{"id":"SA-04(06)","title":"Use of Information Assurance Products"},{"id":"SA-04(07)","title":"NIAP-approved Protection Profiles "},{"id":"SA-04(08)","title":"Continuous Monitoring Plan for Controls"},{"id":"SA-04(09)","title":"Functions, Ports, Protocols, and Services in Use"},{"id":"SA-04(10)","title":"Use of Approved PIV Products"},{"id":"SA-04(11)","title":"System of Records"},{"id":"SA-04(12)","title":"Data Ownership"}]},{"id":"SA-05","title":"System Documentation","enhancements":[{"id":"SA-05(01)","title":"Functional Properties of Security Controls"},{"id":"SA-05(02)","title":"Security-relevant External System Interfaces"},{"id":"SA-05(03)","title":"High-level Design"},{"id":"SA-05(04)","title":"Low-level Design"},{"id":"SA-05(05)","title":"Source Code"}]},{"id":"SA-06","title":"Software Usage Restrictions","enhancements":[]},{"id":"SA-07","title":"User-installed Software","enhancements":[]},{"id":"SA-08","title":"Security and Privacy Engineering Principles","enhancements":[{"id":"SA-08(01)","title":"Clear Abstractions"},{"id":"SA-08(02)","title":"Least Common Mechanism"},{"id":"SA-08(03)","title":"Modularity and Layering"},{"id":"SA-08(04)","title":"Partially Ordered Dependencies"},{"id":"SA-08(05)","title":"Efficiently Mediated Access"},{"id":"SA-08(06)","title":"Minimized Sharing"},{"id":"SA-08(07)","title":"Reduced Complexity"},{"id":"SA-08(08)","title":"Secure Evolvability"},{"id":"SA-08(09)","title":"Trusted Components"},{"id":"SA-08(10)","title":"Hierarchical Trust"},{"id":"SA-08(11)","title":"Inverse Modification Threshold"},{"id":"SA-08(12)","title":"Hierarchical Protection"},{"id":"SA-08(13)","title":"Minimized Security Elements"},{"id":"SA-08(14)","title":"Least Privilege"},{"id":"SA-08(15)","title":"Predicate Permission"},{"id":"SA-08(16)","title":"Self-reliant Trustworthiness"},{"id":"SA-08(17)","title":"Secure Distributed Composition"},{"id":"SA-08(18)","title":"Trusted Communications Channels"},{"id":"SA-08(19)","title":"Continuous Protection"},{"id":"SA-08(20)","title":"Secure Metadata Management"},{"id":"SA-08(21)","title":"Self-analysis"},{"id":"SA-08(22)","title":"Accountability and Traceability"},{"id":"SA-08(23)","title":"Secure Defaults"},{"id":"SA-08(24)","title":"Secure Failure and Recovery"},{"id":"SA-08(25)","title":"Economic Security"},{"id":"SA-08(26)","title":"Performance Security"},{"id":"SA-08(27)","title":"Human Factored Security"},{"id":"SA-08(28)","title":"Acceptable Security"},{"id":"SA-08(29)","title":"Repeatable and Documented Procedures"},{"id":"SA-08(30)","title":"Procedural Rigor"},{"id":"SA-08(31)","title":"Secure System Modification"},{"id":"SA-08(32)","title":"Sufficient Documentation"},{"id":"SA-08(33)","title":"Minimization"}]},{"id":"SA-09","title":"External System Services","enhancements":[{"id":"SA-09(01)","title":"Risk Assessments and Organizational Approvals"},{"id":"SA-09(02)","title":"Identification of Functions, Ports, Protocols, and Services"},{"id":"SA-09(03)","title":"Establish and Maintain Trust Relationship with Providers"},{"id":"SA-09(04)","title":"Consistent Interests of Consumers and Providers"},{"id":"SA-09(05)","title":"Processing, Storage, and Service Location"},{"id":"SA-09(06)","title":"Organization-controlled Cryptographic Keys"},{"id":"SA-09(07)","title":"Organization-controlled Integrity Checking"},{"id":"SA-09(08)","title":"Processing and Storage Location \u2014 U.S. Jurisdiction"}]},{"id":"SA-10","title":"Developer Configuration Management","enhancements":[{"id":"SA-10(01)","title":"Software and Firmware Integrity Verification"},{"id":"SA-10(02)","title":"Alternative Configuration Management Processes"},{"id":"SA-10(03)","title":"Hardware Integrity Verification"},{"id":"SA-10(04)","title":"Trusted Generation"},{"id":"SA-10(05)","title":"Mapping Integrity for Version Control"},{"id":"SA-10(06)","title":"Trusted Distribution"},{"id":"SA-10(07)","title":"Security and Privacy Representatives"}]},{"id":"SA-11","title":"Developer Testing and Evaluation","enhancements":[{"id":"SA-11(01)","title":"Static Code Analysis"},{"id":"SA-11(02)","title":"Threat Modeling and Vulnerability Analyses"},{"id":"SA-11(03)","title":"Independent Verification of Assessment Plans and Evidence"},{"id":"SA-11(04)","title":"Manual Code Reviews"},{"id":"SA-11(05)","title":"Penetration Testing"},{"id":"SA-11(06)","title":"Attack Surface Reviews"},{"id":"SA-11(07)","title":"Verify Scope of Testing and Evaluation"},{"id":"SA-11(08)","title":"Dynamic Code Analysis"},{"id":"SA-11(09)","title":"Interactive Application Security Testing"}]},{"id":"SA-12","title":"Supply Chain Protection","enhancements":[{"id":"SA-12(01)","title":"Acquisition Strategies / Tools / Methods"},{"id":"SA-12(02)","title":"Supplier Reviews"},{"id":"SA-12(03)","title":"Trusted Shipping and Warehousing"},{"id":"SA-12(04)","title":"Diversity of Suppliers"},{"id":"SA-12(05)","title":"Limitation of Harm"},{"id":"SA-12(06)","title":"Minimizing Procurement Time"},{"id":"SA-12(07)","title":"Assessments Prior to Selection / Acceptance / Update"},{"id":"SA-12(08)","title":"Use of All-source Intelligence"},{"id":"SA-12(09)","title":"Operations Security"},{"id":"SA-12(10)","title":"Validate as Genuine and Not Altered"},{"id":"SA-12(11)","title":"Penetration Testing / Analysis of Elements, Processes, and Actors"},{"id":"SA-12(12)","title":"Inter-organizational Agreements"},{"id":"SA-12(13)","title":"Critical Information System Components"},{"id":"SA-12(14)","title":"Identity and Traceability"},{"id":"SA-12(15)","title":"Processes to Address Weaknesses or Deficiencies"}]},{"id":"SA-13","title":"Trustworthiness","enhancements":[]},{"id":"SA-14","title":"Criticality Analysis","enhancements":[{"id":"SA-14(01)","title":"Critical Components with No Viable Alternative Sourcing"}]},{"id":"SA-15","title":"Development Process, Standards, and Tools","enhancements":[{"id":"SA-15(01)","title":"Quality Metrics"},{"id":"SA-15(02)","title":"Security and Privacy Tracking Tools"},{"id":"SA-15(03)","title":"Criticality Analysis"},{"id":"SA-15(04)","title":"Threat Modeling and Vulnerability Analysis"},{"id":"SA-15(05)","title":"Attack Surface Reduction"},{"id":"SA-15(06)","title":"Continuous Improvement"},{"id":"SA-15(07)","title":"Automated Vulnerability Analysis"},{"id":"SA-15(08)","title":"Reuse of Threat and Vulnerability Information"},{"id":"SA-15(09)","title":"Use of Live Data"},{"id":"SA-15(10)","title":"Incident Response Plan"},{"id":"SA-15(11)","title":"Archive System or Component"},{"id":"SA-15(12)","title":"Minimize Personally Identifiable Information"},{"id":"SA-15(13)","title":"Logging Syntax"}]},{"id":"SA-16","title":"Developer-provided Training","enhancements":[]},{"id":"SA-17","title":"Developer Security and Privacy Architecture and Design","enhancements":[{"id":"SA-17(01)","title":"Formal Policy Model"},{"id":"SA-17(02)","title":"Security-relevant Components"},{"id":"SA-17(03)","title":"Formal Correspondence"},{"id":"SA-17(04)","title":"Informal Correspondence"},{"id":"SA-17(05)","title":"Conceptually Simple Design"},{"id":"SA-17(06)","title":"Structure for Testing"},{"id":"SA-17(07)","title":"Structure for Least Privilege"},{"id":"SA-17(08)","title":"Orchestration"},{"id":"SA-17(09)","title":"Design Diversity"}]},{"id":"SA-18","title":"Tamper Resistance and Detection","enhancements":[{"id":"SA-18(01)","title":"Multiple Phases of System Development Life Cycle"},{"id":"SA-18(2)","title":"Inspection of Systems or Components"}]},{"id":"SA-19","title":"Component Authenticity","enhancements":[{"id":"SA-19(01)","title":"Anti-counterfeit Training"},{"id":"SA-19(02)","title":"Configuration Control for Component Service and Repair"},{"id":"SA-19(03)","title":"Component Disposal"},{"id":"SA-19(04)","title":"Anti-counterfeit Scanning"}]},{"id":"SA-20","title":"Customized Development of Critical Components","enhancements":[]},{"id":"SA-21","title":"Developer Screening","enhancements":[{"id":"SA-21(01)","title":"Validation of Screening"}]},{"id":"SA-22","title":"Unsupported System Components","enhancements":[{"id":"SA-22(01)","title":"Alternative Sources for Continued Support"}]},{"id":"SA-23","title":"Specialization","enhancements":[]},{"id":"SA-24","title":"Design For Cyber Resiliency","enhancements":[]}]},"SC":{"name":"System and Communications Protection","controls":[{"id":"SC-01","title":"Policy and Procedures","enhancements":[]},{"id":"SC-02","title":"Separation of System and User Functionality","enhancements":[{"id":"SC-02(01)","title":"Interfaces for Non-privileged Users"},{"id":"SC-02(02)","title":"Disassociability"}]},{"id":"SC-03","title":"Security Function Isolation","enhancements":[{"id":"SC-03(01)","title":"Hardware Separation"},{"id":"SC-03(02)","title":"Access and Flow Control Functions"},{"id":"SC-03(03)","title":"Minimize Nonsecurity Functionality"},{"id":"SC-03(04)","title":"Module Coupling and Cohesiveness"},{"id":"SC-03(05)","title":"Layered Structures"}]},{"id":"SC-04","title":"Information in Shared System Resources","enhancements":[{"id":"SC-04(01)","title":"Security Levels"},{"id":"SC-04(02)","title":"Multilevel or Periods Processing"}]},{"id":"SC-05","title":"Denial-of-service Protection","enhancements":[{"id":"SC-05(01)","title":"Restrict Ability to Attack Other Systems"},{"id":"SC-05(02)","title":"Capacity, Bandwidth, and Redundancy"},{"id":"SC-05(03)","title":"Detection and Monitoring"}]},{"id":"SC-06","title":"Resource Availability","enhancements":[]},{"id":"SC-07","title":"Boundary Protection","enhancements":[{"id":"SC-07(01)","title":"Physically Separated Subnetworks"},{"id":"SC-07(02)","title":"Public Access"},{"id":"SC-07(03)","title":"Access Points"},{"id":"SC-07(04)","title":"External Telecommunications Services"},{"id":"SC-07(05)","title":"Deny by Default \u2014 Allow by Exception"},{"id":"SC-07(06)","title":"Response to Recognized Failures"},{"id":"SC-07(07)","title":"Split Tunneling for Remote Devices"},{"id":"SC-07(08)","title":"Route Traffic to Authenticated Proxy Servers"},{"id":"SC-07(09)","title":"Restrict Threatening Outgoing Communications Traffic"},{"id":"SC-07(10)","title":"Prevent Exfiltration"},{"id":"SC-07(11)","title":"Restrict Incoming Communications Traffic"},{"id":"SC-07(12)","title":"Host-based Protection"},{"id":"SC-07(13)","title":"Isolation of Security Tools, Mechanisms, and Support Components"},{"id":"SC-07(14)","title":"Protect Against Unauthorized Physical Connections"},{"id":"SC-07(15)","title":"Networked Privileged Accesses"},{"id":"SC-07(16)","title":"Prevent Discovery of System Components"},{"id":"SC-07(17)","title":"Automated Enforcement of Protocol Formats"},{"id":"SC-07(18)","title":"Fail Secure"},{"id":"SC-07(19)","title":"Block Communication from Non-organizationally Configured Hosts"},{"id":"SC-07(20)","title":"Dynamic Isolation and Segregation"},{"id":"SC-07(21)","title":"Isolation of System Components"},{"id":"SC-07(22)","title":"Separate Subnets for Connecting to Different Security Domains"},{"id":"SC-07(23)","title":"Disable Sender Feedback on Protocol Validation Failure"},{"id":"SC-07(24)","title":"Personally Identifiable Information"},{"id":"SC-07(25)","title":"Unclassified National Security System Connections"},{"id":"SC-07(26)","title":"Classified National Security System Connections"},{"id":"SC-07(27)","title":"Unclassified Non-national Security System Connections"},{"id":"SC-07(28)","title":"Connections to Public Networks"},{"id":"SC-07(29)","title":"Separate Subnets to Isolate Functions"}]},{"id":"SC-08","title":"Transmission Confidentiality and Integrity","enhancements":[{"id":"SC-08(01)","title":"Cryptographic Protection"},{"id":"SC-08(02)","title":"Pre- and Post-transmission Handling"},{"id":"SC-08(03)","title":"Cryptographic Protection for Message Externals"},{"id":"SC-08(04)","title":"Conceal or Randomize Communications"},{"id":"SC-08(05)","title":"Protected Distribution System"}]},{"id":"SC-09","title":"Transmission Confidentiality","enhancements":[]},{"id":"SC-10","title":"Network Disconnect","enhancements":[]},{"id":"SC-11","title":"Trusted Path","enhancements":[{"id":"SC-11(01)","title":"Irrefutable Communications Path"}]},{"id":"SC-12","title":"Cryptographic Key Establishment and Management","enhancements":[{"id":"SC-12(01)","title":"Availability"},{"id":"SC-12(02)","title":"Symmetric Keys"},{"id":"SC-12(03)","title":"Asymmetric Keys"},{"id":"SC-12(04)","title":"PKI Certificates"},{"id":"SC-12(05)","title":"PKI Certificates / Hardware Tokens"},{"id":"SC-12(06)","title":"Physical Control of Keys"}]},{"id":"SC-13","title":"Cryptographic Protection","enhancements":[{"id":"SC-13(01)","title":"FIPS-validated Cryptography"},{"id":"SC-13(02)","title":"NSA-approved Cryptography"},{"id":"SC-13(03)","title":"Individuals Without Formal Access Approvals"},{"id":"SC-13(04)","title":"Digital Signatures"}]},{"id":"SC-14","title":"Public Access Protections","enhancements":[]},{"id":"SC-15","title":"Collaborative Computing Devices and Applications","enhancements":[{"id":"SC-15(01)","title":"Physical or Logical Disconnect"},{"id":"SC-15(02)","title":"Blocking Inbound and Outbound Communications Traffic"},{"id":"SC-15(03)","title":"Disabling and Removal in Secure Work Areas"},{"id":"SC-15(04)","title":"Explicitly Indicate Current Participants"}]},{"id":"SC-16","title":"Transmission of Security and Privacy Attributes","enhancements":[{"id":"SC-16(01)","title":"Integrity Verification"},{"id":"SC-16(02)","title":"Anti-spoofing Mechanisms"},{"id":"SC-16(03)","title":"Cryptographic Binding"}]},{"id":"SC-17","title":"Public Key Infrastructure Certificates","enhancements":[]},{"id":"SC-18","title":"Mobile Code","enhancements":[{"id":"SC-18(01)","title":"Identify Unacceptable Code and Take Corrective Actions"},{"id":"SC-18(02)","title":"Acquisition, Development, and Use"},{"id":"SC-18(03)","title":"Prevent Downloading and Execution"},{"id":"SC-18(04)","title":"Prevent Automatic Execution"},{"id":"SC-18(05)","title":"Allow Execution Only in Confined Environments"}]},{"id":"SC-19","title":"Voice Over Internet Protocol","enhancements":[]},{"id":"SC-20","title":"Secure Name/Address Resolution Service (Authoritative Source)","enhancements":[{"id":"SC-20(01)","title":"Child Subspaces"},{"id":"SC-20(02)","title":"Data Origin and Integrity"}]},{"id":"SC-21","title":"Secure Name/Address Resolution Service (Recursive or Caching Resolver)","enhancements":[{"id":"SC-21(01)","title":"Data Origin and Integrity"}]},{"id":"SC-22","title":"Architecture and Provisioning for Name/Address Resolution Service","enhancements":[]},{"id":"SC-23","title":"Session Authenticity","enhancements":[{"id":"SC-23(01)","title":"Invalidate Session Identifiers at Logout"},{"id":"SC-23(02)","title":"User-initiated Logouts and Message Displays"},{"id":"SC-23(03)","title":"Unique System-generated Session Identifiers"},{"id":"SC-23(04)","title":"Unique Session Identifiers with Randomization"},{"id":"SC-23(05)","title":"Allowed Certificate Authorities"}]},{"id":"SC-24","title":"Fail in Known State","enhancements":[]},{"id":"SC-25","title":"Thin Nodes","enhancements":[]},{"id":"SC-26","title":"Decoys","enhancements":[{"id":"SC-26(01)","title":"Detection of Malicious Code"}]},{"id":"SC-27","title":"Platform-independent Applications","enhancements":[]},{"id":"SC-28","title":"Protection of Information at Rest","enhancements":[{"id":"SC-28(01)","title":"Cryptographic Protection"},{"id":"SC-28(02)","title":"Offline Storage"},{"id":"SC-28(03)","title":"Cryptographic Keys"}]},{"id":"SC-29","title":"Heterogeneity","enhancements":[{"id":"SC-29(01)","title":"Virtualization Techniques"}]},{"id":"SC-30","title":"Concealment and Misdirection","enhancements":[{"id":"SC-30(01)","title":"Virtualization Techniques"},{"id":"SC-30(02)","title":"Randomness"},{"id":"SC-30(03)","title":"Change Processing and Storage Locations"},{"id":"SC-30(04)","title":"Misleading Information"},{"id":"SC-30(05)","title":"Concealment of System Components"}]},{"id":"SC-31","title":"Covert Channel Analysis","enhancements":[{"id":"SC-31(01)","title":"Test Covert Channels for Exploitability"},{"id":"SC-31(02)","title":"Maximum Bandwidth"},{"id":"SC-31(03)","title":"Measure Bandwidth in Operational Environments"}]},{"id":"SC-32","title":"System Partitioning","enhancements":[{"id":"SC-32(01)","title":"Separate Physical Domains for Privileged Functions"}]},{"id":"SC-33","title":"Transmission Preparation Integrity","enhancements":[]},{"id":"SC-34","title":"Non-modifiable Executable Programs","enhancements":[{"id":"SC-34(01)","title":"No Writable Storage"},{"id":"SC-34(02)","title":"Integrity Protection on Read-only Media"},{"id":"SC-34(03)","title":"Hardware-based Protection"}]},{"id":"SC-35","title":"External Malicious Code Identification","enhancements":[]},{"id":"SC-36","title":"Distributed Processing and Storage","enhancements":[{"id":"SC-36(01)","title":"Polling Techniques"},{"id":"SC-36(02)","title":"Synchronization"}]},{"id":"SC-37","title":"Out-of-band Channels","enhancements":[{"id":"SC-37(01)","title":"Ensure Delivery and Transmission"}]},{"id":"SC-38","title":"Operations Security","enhancements":[]},{"id":"SC-39","title":"Process Isolation","enhancements":[{"id":"SC-39(01)","title":"Hardware Separation"},{"id":"SC-39(02)","title":"Separate Execution Domain Per Thread"}]},{"id":"SC-40","title":"Wireless Link Protection","enhancements":[{"id":"SC-40(01)","title":"Electromagnetic Interference"},{"id":"SC-40(02)","title":"Reduce Detection Potential"},{"id":"SC-40(03)","title":"Imitative or Manipulative Communications Deception"},{"id":"SC-40(04)","title":"Signal Parameter Identification"}]},{"id":"SC-41","title":"Port and I/O Device Access","enhancements":[]},{"id":"SC-42","title":"Sensor Capability and Data","enhancements":[{"id":"SC-42(01)","title":"Reporting to Authorized Individuals or Roles"},{"id":"SC-42(02)","title":"Authorized Use"},{"id":"SC-42(03)","title":"Prohibit Use of Devices"},{"id":"SC-42(04)","title":"Notice of Collection"},{"id":"SC-42(05)","title":"Collection Minimization"}]},{"id":"SC-43","title":"Usage Restrictions","enhancements":[]},{"id":"SC-44","title":"Detonation Chambers","enhancements":[]},{"id":"SC-45","title":"System Time Synchronization","enhancements":[{"id":"SC-45(01)","title":"Synchronization with Authoritative Time Source"},{"id":"SC-45(02)","title":"Secondary Authoritative Time Source"}]},{"id":"SC-46","title":"Cross Domain Policy Enforcement","enhancements":[]},{"id":"SC-47","title":"Alternate Communications Paths","enhancements":[]},{"id":"SC-48","title":"Sensor Relocation","enhancements":[{"id":"SC-48(01)","title":"Dynamic Relocation of Sensors or Monitoring Capabilities"}]},{"id":"SC-49","title":"Hardware-enforced Separation and Policy Enforcement","enhancements":[]},{"id":"SC-50","title":"Software-enforced Separation and Policy Enforcement","enhancements":[]},{"id":"SC-51","title":"Hardware-based Protection","enhancements":[]}]},"SI":{"name":"System and Information Integrity","controls":[{"id":"SI-01","title":"Policy and Procedures","enhancements":[]},{"id":"SI-02","title":"Flaw Remediation","enhancements":[{"id":"SI-02(01)","title":"Central Management"},{"id":"SI-02(02)","title":"Automated Flaw Remediation Status"},{"id":"SI-02(03)","title":"Time to Remediate Flaws and Benchmarks for Corrective Actions"},{"id":"SI-02(04)","title":"Automated Patch Management Tools"},{"id":"SI-02(05)","title":"Automatic Software and Firmware Updates"},{"id":"SI-02(06)","title":"Removal of Previous Versions of Software and Firmware"},{"id":"SI-02(07)","title":"Root Cause Analysis"}]},{"id":"SI-03","title":"Malicious Code Protection","enhancements":[{"id":"SI-03(01)","title":"Central Management"},{"id":"SI-03(02)","title":"Automatic Updates"},{"id":"SI-03(03)","title":"Non-privileged Users"},{"id":"SI-03(04)","title":"Updates Only by Privileged Users"},{"id":"SI-03(05)","title":"Portable Storage Devices"},{"id":"SI-03(06)","title":"Testing and Verification"},{"id":"SI-03(07)","title":"Nonsignature-based Detection"},{"id":"SI-03(08)","title":"Detect Unauthorized Commands"},{"id":"SI-03(09)","title":"Authenticate Remote Commands"},{"id":"SI-03(10)","title":"Malicious Code Analysis"}]},{"id":"SI-04","title":"System Monitoring","enhancements":[{"id":"SI-04(01)","title":"System-wide Intrusion Detection System"},{"id":"SI-04(02)","title":"Automated Tools and Mechanisms for Real-time Analysis"},{"id":"SI-04(03)","title":"Automated Tool and Mechanism Integration"},{"id":"SI-04(04)","title":"Inbound and Outbound Communications Traffic"},{"id":"SI-04(05)","title":"System-generated Alerts"},{"id":"SI-04(06)","title":"Restrict Non-privileged Users"},{"id":"SI-04(07)","title":"Automated Response to Suspicious Events"},{"id":"SI-04(08)","title":"Protection of Monitoring Information"},{"id":"SI-04(09)","title":"Testing of Monitoring Tools and Mechanisms"},{"id":"SI-04(10)","title":"Visibility of Encrypted Communications"},{"id":"SI-04(11)","title":"Analyze Communications Traffic Anomalies"},{"id":"SI-04(12)","title":"Automated Organization-generated Alerts"},{"id":"SI-04(13)","title":"Analyze Traffic and Event Patterns"},{"id":"SI-04(14)","title":"Wireless Intrusion Detection"},{"id":"SI-04(15)","title":"Wireless to Wireline Communications"},{"id":"SI-04(16)","title":"Correlate Monitoring Information"},{"id":"SI-04(17)","title":"Integrated Situational Awareness"},{"id":"SI-04(18)","title":"Analyze Traffic and Covert Exfiltration"},{"id":"SI-04(19)","title":"Risk for Individuals"},{"id":"SI-04(20)","title":"Privileged Users"},{"id":"SI-04(21)","title":"Probationary Periods"},{"id":"SI-04(22)","title":"Unauthorized Network Services"},{"id":"SI-04(23)","title":"Host-based Devices"},{"id":"SI-04(24)","title":"Indicators of Compromise"},{"id":"SI-04(25)","title":"Optimize Network Traffic Analysis"}]},{"id":"SI-05","title":"Security Alerts, Advisories, and Directives","enhancements":[{"id":"SI-05(01)","title":"Automated Alerts and Advisories"}]},{"id":"SI-06","title":"Security and Privacy Function Verification","enhancements":[{"id":"SI-06(01)","title":"Notification of Failed Security Tests"},{"id":"SI-06(02)","title":"Automation Support for Distributed Testing"},{"id":"SI-06(03)","title":"Report Verification Results"}]},{"id":"SI-07","title":"Software, Firmware, and Information Integrity","enhancements":[{"id":"SI-07(01)","title":"Integrity Checks"},{"id":"SI-07(02)","title":"Automated Notifications of Integrity Violations"},{"id":"SI-07(03)","title":"Centrally Managed Integrity Tools"},{"id":"SI-07(04)","title":"Tamper-evident Packaging"},{"id":"SI-07(05)","title":"Automated Response to Integrity Violations"},{"id":"SI-07(06)","title":"Cryptographic Protection"},{"id":"SI-07(07)","title":"Integration of Detection and Response"},{"id":"SI-07(08)","title":"Auditing Capability for Significant Events"},{"id":"SI-07(09)","title":"Verify Boot Process"},{"id":"SI-07(10)","title":"Protection of Boot Firmware"},{"id":"SI-07(11)","title":"Confined Environments with Limited Privileges"},{"id":"SI-07(12)","title":"Integrity Verification"},{"id":"SI-07(13)","title":"Code Execution in Protected Environments"},{"id":"SI-07(14)","title":"Binary or Machine Executable Code"},{"id":"SI-07(15)","title":"Code Authentication"},{"id":"SI-07(16)","title":"Time Limit on Process Execution Without Supervision"},{"id":"SI-07(17)","title":"Runtime Application Self-protection"}]},{"id":"SI-08","title":"Spam Protection","enhancements":[{"id":"SI-08(01)","title":"Central Management"},{"id":"SI-08(02)","title":"Automatic Updates"},{"id":"SI-08(03)","title":"Continuous Learning Capability"}]},{"id":"SI-09","title":"Information Input Restrictions","enhancements":[]},{"id":"SI-10","title":"Information Input Validation","enhancements":[{"id":"SI-10(01)","title":"Manual Override Capability"},{"id":"SI-10(02)","title":"Review and Resolve Errors"},{"id":"SI-10(03)","title":"Predictable Behavior"},{"id":"SI-10(04)","title":"Timing Interactions"},{"id":"SI-10(05)","title":"Restrict Inputs to Trusted Sources and Approved Formats"},{"id":"SI-10(06)","title":"Injection Prevention"}]},{"id":"SI-11","title":"Error Handling","enhancements":[]},{"id":"SI-12","title":"Information Management and Retention","enhancements":[{"id":"SI-12(01)","title":"Limit Personally Identifiable Information Elements"},{"id":"SI-12(02)","title":"Minimize Personally Identifiable Information in Testing, Training, and Research"},{"id":"SI-12(03)","title":"Information Disposal"}]},{"id":"SI-13","title":"Predictable Failure Prevention","enhancements":[{"id":"SI-13(01)","title":"Transferring Component Responsibilities"},{"id":"SI-13(02)","title":"Time Limit on Process Execution Without Supervision"},{"id":"SI-13(03)","title":"Manual Transfer Between Components"},{"id":"SI-13(04)","title":"Standby Component Installation and Notification"},{"id":"SI-13(05)","title":"Failover Capability"}]},{"id":"SI-14","title":"Non-persistence","enhancements":[{"id":"SI-14(01)","title":"Refresh from Trusted Sources"},{"id":"SI-14(02)","title":"Non-persistent Information"},{"id":"SI-14(03)","title":"Non-persistent Connectivity"}]},{"id":"SI-15","title":"Information Output Filtering","enhancements":[]},{"id":"SI-16","title":"Memory Protection","enhancements":[]},{"id":"SI-17","title":"Fail-safe Procedures","enhancements":[]},{"id":"SI-18","title":"Personally Identifiable Information Quality Operations","enhancements":[{"id":"SI-18(01)","title":"Automation Support"},{"id":"SI-18(02)","title":"Data Tags"},{"id":"SI-18(03)","title":"Collection"},{"id":"SI-18(04)","title":"Individual Requests"},{"id":"SI-18(05)","title":"Notice of Correction or Deletion"}]},{"id":"SI-19","title":"De-identification","enhancements":[{"id":"SI-19(01)","title":"Collection"},{"id":"SI-19(02)","title":"Archiving"},{"id":"SI-19(03)","title":"Release"},{"id":"SI-19(04)","title":"Removal, Masking, Encryption, Hashing, or Replacement of Direct Identifiers"},{"id":"SI-19(05)","title":"Statistical Disclosure Control"},{"id":"SI-19(06)","title":"Differential Privacy"},{"id":"SI-19(07)","title":"Validated Algorithms and Software"},{"id":"SI-19(08)","title":"Motivated Intruder"}]},{"id":"SI-20","title":"Tainting","enhancements":[]},{"id":"SI-21","title":"Information Refresh","enhancements":[]},{"id":"SI-22","title":"Information Diversity","enhancements":[]},{"id":"SI-23","title":"Information Fragmentation","enhancements":[]}]},"SR":{"name":"Supply Chain Risk Management","controls":[{"id":"SR-01","title":"Policy and Procedures","enhancements":[]},{"id":"SR-02","title":"Supply Chain Risk Management Plan","enhancements":[{"id":"SR-02(01)","title":"Establish SCRM Team"}]},{"id":"SR-03","title":"Supply Chain Controls and Processes","enhancements":[{"id":"SR-03(01)","title":"Diverse Supply Base"},{"id":"SR-03(02)","title":"Limitation of Harm"},{"id":"SR-03(03)","title":"Sub-tier Flow Down"}]},{"id":"SR-04","title":"Provenance","enhancements":[{"id":"SR-04(01)","title":"Identity"},{"id":"SR-04(02)","title":"Track and Trace"},{"id":"SR-04(03)","title":"Validate as Genuine and Not Altered"},{"id":"SR-04(04)","title":"Supply Chain Integrity \u2014 Pedigree"}]},{"id":"SR-05","title":"Acquisition Strategies, Tools, and Methods","enhancements":[{"id":"SR-05(01)","title":"Adequate Supply"},{"id":"SR-05(02)","title":"Assessments Prior to Selection, Acceptance, Modification, or Update"}]},{"id":"SR-06","title":"Supplier Assessments and Reviews","enhancements":[{"id":"SR-06(01)","title":"Testing and Analysis"}]},{"id":"SR-07","title":"Supply Chain Operations Security","enhancements":[]},{"id":"SR-08","title":"Notification Agreements","enhancements":[]},{"id":"SR-09","title":"Tamper Resistance and Detection","enhancements":[{"id":"SR-09(01)","title":"Multiple Stages of System Development Life Cycle"}]},{"id":"SR-10","title":"Inspection of Systems or Components","enhancements":[]},{"id":"SR-11","title":"Component Authenticity","enhancements":[{"id":"SR-11(01)","title":"Anti-counterfeit Training"},{"id":"SR-11(02)","title":"Configuration Control for Component Service and Repair"},{"id":"SR-11(03)","title":"Anti-counterfeit Scanning"}]},{"id":"SR-12","title":"Component Disposal","enhancements":[]}]}};
+
+const familyOrder = Object.keys(CATALOG);
+let totalControls = 0, totalEnh = 0;
+familyOrder.forEach(fid => {
+  const f = CATALOG[fid];
+  totalControls += f.controls.length;
+  f.controls.forEach(c => totalEnh += c.enhancements.length);
+});
+
+document.getElementById('stats').innerHTML =
+  `<span><strong>${familyOrder.length}</strong> Families</span>` +
+  `<span><strong>${totalControls}</strong> Controls</span>` +
+  `<span><strong>${totalEnh}</strong> Enhancements</span>`;
+
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function highlight(text, q) {
+  if (!q) return esc(text);
+  const re = new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+  return esc(text).replace(re, '<span class="highlight">$1</span>');
+}
+
+function matches(text, q) {
+  return !q || text.toLowerCase().includes(q.toLowerCase());
+}
+
+function render(q = '') {
+  const nav = document.getElementById('familyNav');
+  const cat = document.getElementById('catalog');
+  const noRes = document.getElementById('noResults');
+  nav.innerHTML = '';
+  cat.innerHTML = '';
+  let anyVisible = false;
+
+  familyOrder.forEach(fid => {
+    const fam = CATALOG[fid];
+    const filteredControls = fam.controls.filter(c => {
+      if (matches(c.id, q) || matches(c.title, q) || matches(fid, q) || matches(fam.name, q)) return true;
+      return c.enhancements.some(e => matches(e.id, q) || matches(e.title, q));
+    });
+    if (filteredControls.length === 0) return;
+    anyVisible = true;
+
+    // Nav
+    const li = document.createElement('li');
+    li.innerHTML = `<a href="#family-${fid}" data-family="${fid}">
+      <span class="family-badge">${fid}</span>
+      <span>${esc(fam.name)}</span>
+      <span class="family-count">${filteredControls.length}</span>
+    </a>`;
+    nav.appendChild(li);
+
+    // Section
+    const section = document.createElement('section');
+    section.className = 'family-section';
+    section.id = `family-${fid}`;
+    const enhCount = filteredControls.reduce((s, c) => s + c.enhancements.length, 0);
+    section.innerHTML = `
+      <div class="family-header">
+        <span class="family-id fid-${fid}">${fid}</span>
+        <span class="family-title">${highlight(fam.name, q)}</span>
+        <span class="family-meta">${filteredControls.length} controls · ${enhCount} enhancements</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="family-body"></div>
+    `;
+    const body = section.querySelector('.family-body');
+    filteredControls.forEach(c => {
+      const hasEnh = c.enhancements.length > 0;
+      // If searching and control itself doesn't match but an enhancement does, still show relevant enh
+      let enhs = c.enhancements;
+      if (q && !(matches(c.id, q) || matches(c.title, q))) {
+        enhs = c.enhancements.filter(e => matches(e.id, q) || matches(e.title, q));
+      }
+      const item = document.createElement('div');
+      item.className = 'control-item' + (q && enhs.length ? ' expanded' : '');
+      item.innerHTML = `
+        <div class="control-row">
+          <span class="control-id">${highlight(c.id, q)}</span>
+          <span class="control-title">${highlight(c.title, q)}</span>
+          ${hasEnh ? `<span class="enh-badge">${c.enhancements.length} enh</span>` : ''}
+          ${hasEnh ? `<span class="control-chevron">▶</span>` : ''}
+        </div>
+        ${hasEnh ? `<div class="enhancements">${enhs.map(e => `
+          <div class="enh-item">
+            <span class="enh-id">${highlight(e.id, q)}</span>
+            <span class="enh-title">${highlight(e.title, q)}</span>
+          </div>`).join('')}</div>` : ''}
+      `;
+      if (hasEnh) {
+        item.querySelector('.control-row').addEventListener('click', () => {
+          item.classList.toggle('expanded');
+        });
+      }
+      body.appendChild(item);
+    });
+    section.querySelector('.family-header').addEventListener('click', () => {
+      section.classList.toggle('collapsed');
+    });
+    cat.appendChild(section);
+  });
+
+  noRes.style.display = anyVisible ? 'none' : 'block';
+}
+
+// Active nav highlight on scroll
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.family-nav a').forEach(a => a.classList.remove('active'));
+      const link = document.querySelector(`.family-nav a[data-family="${e.target.id.replace('family-','')}"]`);
+      if (link) link.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+function observeSections() {
+  document.querySelectorAll('.family-section').forEach(s => observer.observe(s));
+}
+
+document.getElementById('search').addEventListener('input', e => {
+  render(e.target.value.trim());
+  observeSections();
+});
+
+document.getElementById('expandAll').addEventListener('click', () => {
+  document.querySelectorAll('.family-section').forEach(s => s.classList.remove('collapsed'));
+});
+document.getElementById('collapseAll').addEventListener('click', () => {
+  document.querySelectorAll('.family-section').forEach(s => s.classList.add('collapsed'));
+});
+document.getElementById('expandControls').addEventListener('click', () => {
+  document.querySelectorAll('.control-item').forEach(i => {
+    if (i.querySelector('.enhancements')) i.classList.add('expanded');
+  });
+});
+document.getElementById('collapseControls').addEventListener('click', () => {
+  document.querySelectorAll('.control-item').forEach(i => i.classList.remove('expanded'));
+});
+
+render();
+observeSections();
+</script>
+</body>
+</html>
